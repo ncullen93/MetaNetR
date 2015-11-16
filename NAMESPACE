@@ -1,0 +1,19 @@
+export(add.data,
+		clear.data,
+		clear.metadata,
+		clear.networks,
+		get.data,
+		load.data,
+		map.network,
+		run.vis,
+		set.LPV,
+		set.metadata,
+		view.net,
+		metanet,
+		print.metanet)
+import(data.table)
+import(ggplot2) 
+import(igraph) 
+import(RColorBrewer)
+import(dplyr)
+import(akima)

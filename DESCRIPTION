@@ -1,0 +1,10 @@
+Package: MetaNetR
+Version: 0.99.0
+Date: 2015-11-11
+Title: Statistical Analysis & Comparison of Metagenomic Network Data
+Author: N.C. Cullen <nicholas.c.cullen.th@dartmouth.edu>
+Maintainer: N.C. Cullen <nicholas.c.cullen.th@dartmouth.edu>
+Depends: ggplot2, igraph
+Imports: RColorBrewer, dplyr, data.table, akima
+Description: This package is used for generating hierarchical networks from annotated meta-omics data and creating publication-quality visualizations of such networks.
+License: GPL (>=2)	
