@@ -1,5 +1,4 @@
 
-# COMPLETE -> 9/13/15
 
 # GOOD
 get.plot.layout.options <- function(net){

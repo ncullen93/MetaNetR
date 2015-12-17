@@ -1,5 +1,4 @@
 
-# NOT COMPLETE -> 9/13/15
 
 # GOOD
 get.edge.color.options <- function(net){

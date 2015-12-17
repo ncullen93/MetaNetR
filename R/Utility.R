@@ -1,8 +1,4 @@
 
-# COMPLETE -> 9/13/15
-
-# THESE FUNCTIONS WORK BEHIND THE SCENES
-# DO NOT NEED DOCUMENTATION
 
 add.sink <- function(df){
   num.rows <- nrow(df)

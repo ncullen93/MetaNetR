@@ -1,6 +1,4 @@
 
-# COMPLETE -> 9/13/15
-
 
 add.data <- function(mn,
                      f,

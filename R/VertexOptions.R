@@ -1,9 +1,4 @@
 
-# NOT COMPLETE -> 9/13/15
-
-# DECISION - NORMALIZE "SINK" BUT LEAVE THE REST BE
-
-
 # GOOD
 get.vertex.size.options <- function(net){
   to.return <- vector("list",2)  
