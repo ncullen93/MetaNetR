@@ -11,7 +11,8 @@ get.edge.color.options <- function(net){
   sink <- as.numeric(V(net)[V(net)$name=="SINK"])  
   paths<-get.all.shortest.paths(net,from=sink, weights=rep(1,ecount(net)))
   levels<-unlist(lapply(paths$res, length))[1:vcount(net)]
-  level.list <- list(c(),c(),c())
+  #print(levels)
+  level.list <- vector("list",max(levels))
   for (i in 1:length(levels)){
     for (idx in 1:max(levels)){
       if (levels[i]==idx){
@@ -67,7 +68,7 @@ get.edge.width.options <- function(net){
   sink <- as.numeric(V(net)[V(net)$name=="SINK"])  
   paths<-get.all.shortest.paths(net, from=sink,weights=rep(1,ecount(net)))
   levels<-unlist(lapply(paths$res, length))[1:vcount(net)]
-  level.list <- list(c(),c(),c())
+  level.list <- vector("list",max(levels))
   for (i in 1:length(levels)){
     for (idx in 1:max(levels)){
       if (levels[i]==idx){
@@ -120,7 +121,7 @@ get.edge.curved.options <- function(net){
   sink <- as.numeric(V(net)[V(net)$name=="SINK"])  
   paths<-get.all.shortest.paths(net, from=sink,weights=rep(1,ecount(net)))
   levels<-unlist(lapply(paths$res, length))[1:vcount(net)]
-  level.list <- list(c(),c(),c())
+  level.list <- vector("list",max(levels))
   for (i in 1:length(levels)){
     for (idx in 1:max(levels)){
       if (levels[i]==idx){
@@ -168,7 +169,7 @@ get.edge.lty.options <- function(net){
   sink <- as.numeric(V(net)[V(net)$name=="SINK"])  
   paths<-get.all.shortest.paths(net, from=sink,weights=rep(1,ecount(net)))
   levels<-unlist(lapply(paths$res, length))[1:vcount(net)]
-  level.list <- list(c(),c(),c())
+  level.list <- vector("list",max(levels))
   for (i in 1:length(levels)){
     for (idx in 1:max(levels)){
       if (levels[i]==idx){

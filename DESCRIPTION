@@ -8,3 +8,5 @@ Depends: ggplot2, igraph
 Imports: RColorBrewer, dplyr, data.table, akima
 Description: This package is used for generating hierarchical networks from annotated meta-omics data and creating publication-quality visualizations of such networks.
 License: GPL (>=2)	
+Suggests: knitr
+VignetteBuilder: knitr

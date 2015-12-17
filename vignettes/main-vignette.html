@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="author" content="Cullen, N., Foster, J., Casaburi, G." />
+
+<meta name="date" content="2015-12-15" />
+
+<title>Meta-omic Networks with MetaNetR</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0A%7D%0Apre%20%7B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div id="header">
+<h1 class="title">Meta-omic Networks with MetaNetR</h1>
+<h4 class="author"><em>Cullen, N., Foster, J., Casaburi, G.</em></h4>
+<h4 class="date"><em>2015-12-15</em></h4>
+</div>
+
+
+<p>The MetaNetR package was developed to face a long-standing problem in the meta-omics research: providing non-technical researchers a method for creating publication- and presentation-quality network plots from hierarchical meta-omic data. With MetaNetR, users have access to extensive functionality using only a few commands. Most importantly, the process for creating an advanced network plot is <strong>completely</strong> interactive – requiring zero manual parameter changes.</p>
+<p>Overall, MetaNetR offers users the ability to do the following:</p>
+<ul>
+<li>Load (big) meta-omic datasets</li>
+<li>Map hierarchical networks from raw datasets</li>
+<li>Visualize and create network plots with a fully user-interactive process</li>
+<li>Explore a vast collection of descriptive statistical measures of networks</li>
+</ul>
+<p>In this vignette, we will go over the basic, yet powerful, functionality of MetaNetR. Before anything, though, let’s load the package. Keep in mind it must be installed first!</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MetaNetR)</code></pre></div>
+<div id="loading-data" class="section level2">
+<h2>Loading Data</h2>
+<p>Loading data is fundamental to the network creation process. With MetaNetR, users load data exactly as they would in the standard R environment.</p>
+<p>In any case, the package includes three actual metagenomic datasets that can be used for practice – called dataset0 (large dataset), and three partitions of dataset0 (dataset1, dataset2, dataset3).</p>
+<p>Let’s load two of the datasets for now.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dataset1)
+<span class="kw">data</span>(dataset2)</code></pre></div>
+<p>We can take a look at the data to get a preliminary understanding of its structure</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(dataset1, <span class="dt">n=</span><span class="dv">5</span>)</code></pre></div>
+<pre><code>##    Label.1                  Path.1               Path.2
+## 1:  K01014       Energy Metabolism    Sulfur metabolism
+## 2:  K01026 Carbohydrate Metabolism  Pyruvate metabolism
+## 3:  K01027 Carbohydrate Metabolism Butanoate metabolism
+## 4:  K01028 Carbohydrate Metabolism Butanoate metabolism
+## 5:  K01029 Carbohydrate Metabolism Butanoate metabolism
+##                                              Path.3 Value.1 Value.2
+## 1:               aryl sulfotransferase [EC:2.8.2.1]       0       0
+## 2:          propionate CoA-transferase [EC:2.8.3.1]       0       0
+## 3:           3-oxoacid CoA-transferase [EC:2.8.3.5]       5       5
+## 4: 3-oxoacid CoA-transferase subunit A [EC:2.8.3.5]      11       8
+## 5: 3-oxoacid CoA-transferase subunit B [EC:2.8.3.5]      10      13
+##    Value.3
+## 1:       0
+## 2:       1
+## 3:       6
+## 4:      10
+## 5:      20</code></pre>
+<p>If you want to use your own datasets, you would load them into the R environment as data.frames using any standard data loading method.</p>
+<p>Now that we have our datasets, we need to combine them into a R <code>list</code>. This is necessary for mapping the data later.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">files &lt;-<span class="st"> </span><span class="kw">list</span>(dataset1,dataset2)</code></pre></div>
+</div>
+<div id="creating-an-lpv-map" class="section level2">
+<h2>Creating an <code>LPV Map</code></h2>
+<p>Now that we have two datasets at our disposal, we need to create a <em>label-path-value map</em> for each dataset. This is essentially the way to tell MetaNetR what each column in the data represents. A <strong>label</strong> is a non-essential identifier (e.g. read number), a <strong>path</strong> represents part of the hierarchical taxonomical structure (e.g. protein) and a <strong>value</strong> is the actual numerical, experimental result (e.g. abundance).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># FOR DATASET 1</span>
+label.columns<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>) <span class="co"># columns in dataset1 that are &quot;labels&quot;</span>
+path.columns<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>) <span class="co"># columns in dataset1 that are &quot;paths&quot;</span>
+value.columns<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>) <span class="co"># columns in dataset1 that are &quot;values&quot;</span>
+lpv<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">list</span>(label.columns<span class="fl">.1</span>,
+              path.columns<span class="fl">.1</span>,
+              value.columns<span class="fl">.1</span>) <span class="co"># combine labels/paths/values into a list</span>
+
+<span class="co"># FOR DATASET 2</span>
+label.columns<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>) <span class="co"># columns in dataset1 that are &quot;labels&quot;</span>
+path.columns<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>) <span class="co"># columns in dataset1 that are &quot;paths&quot;</span>
+value.columns<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>) <span class="co"># columns in dataset1 that are &quot;values&quot;</span>
+lpv<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">list</span>(label.columns<span class="fl">.2</span>,
+              path.columns<span class="fl">.2</span>,
+              value.columns<span class="fl">.2</span>) <span class="co"># combine labels/paths/values into a list</span></code></pre></div>
+<p>Now that we have two lpv maps, we will do as we did with the data and combine them into a list.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lpv &lt;-<span class="st"> </span><span class="kw">list</span>(lpv<span class="fl">.1</span>,
+            lpv<span class="fl">.2</span>) <span class="co"># combbine each dataset lpv into one main lpv</span></code></pre></div>
+</div>
+<div id="loading-a-metanetr-variable" class="section level2">
+<h2>Loading a MetaNetR variable</h2>
+<p>Since we have our data and our lpv maps, we can now load those two together and combine them into one variable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn &lt;-<span class="st"> </span><span class="kw">load.data</span>(<span class="dt">f=</span>files,<span class="dt">lpv=</span>lpv)</code></pre></div>
+<p>Above, we called the <code>load.data</code> function, passing in our <code>files</code> list and our <code>lpv</code> list as arguments. We assign the result of the function to a new variable called <code>mn</code>. Here, <code>mn</code> is our MetaNetR object. We can easily check that it belongs to the MetaNet class.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(mn)</code></pre></div>
+<pre><code>## [1] &quot;metanet&quot;</code></pre>
+<p>Additionally, we can print our <code>mn</code> variable to the console, where we will see information about it.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn</code></pre></div>
+<pre><code>## --Meta'omic Network-- 
+## Mapped Networks:  0 
+## Data Sets:  2 
+## No Metadata Available</code></pre>
+<p>From printing, we see that there is a metadata section! Users can set metadata in order to keep track of important notes related to the data or the visualizations. For example, let’s note that <code>mn</code> has data that was collected in Florida.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.metadata</span>(mn, <span class="st">&quot;Location&quot;</span>, <span class="st">&quot;Florida&quot;</span>)</code></pre></div>
+<p>Remember that functions such as <code>set.metadata</code> can be found in the official MetaNetR documentation. ## Mapping Networks Now that we have our <code>mn</code> variable containing our data and original lpv maps, we can go ahead and actually map a network.</p>
+<p>We do this using the <code>map.network</code> function. While we refer the users to the official documentation using <code>help(map.network)</code>, this function serves to create the actual network structure from the underlying data and lpv map.</p>
+<p>With this function, We will again pass in an lpv map. This time, however, the lpv map offers an additional level of flexibility because you do not actually have to use the entire <em>original</em> lpv map.</p>
+<p>Let’s see what this means:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn,<span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
+            <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">2</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">2</span>:<span class="dv">3</span>)))</code></pre></div>
+<p>Above, we used both datasets by specifying as such for the <code>datasets</code> argument. Then, we specified the <code>lpv</code> argument of the function to use the <strong>first</strong> label, the <strong>first</strong> and <strong>second</strong> paths, and the <strong>second</strong> and <strong>third</strong> values for each dataset. What this means is that we left off the <strong>third</strong> path and the <strong>first</strong> value from the network creation process.</p>
+<p>The <code>map.network</code> function creates a “combined network” from all of the datasets, merging them into one hierarchical network structure. We can use all of the labels, paths, and values for each dataset if we wanted! This is how:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn, <span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
+            <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>)))</code></pre></div>
+<p>Even more, we can use different <em>paths</em> from each dataset, leading to an interesting structural merging of the two:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn, <span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
+            <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">1</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">2</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>)))</code></pre></div>
+<p>This functionality gives the user flexibility in the network <em>creation</em> process, without requiring that data is loaded over and over again with different <em>original</em> lpv maps.</p>
+<p>With all these, the <code>map.network</code> function creates a combined network with each call. We can vieW all of the networks we have created.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn$combined.networks</code></pre></div>
+<pre><code>## [[1]]
+## IGRAPH UNW- 223 226 -- 
+## + attr: name (v/c), weight_1 (e/n), weight_2 (e/n), weight (e/n)
+## 
+## [[2]]
+## IGRAPH UNW- 1540 1746 -- 
+## + attr: name (v/c), weight_1 (e/n), weight_2 (e/n), weight (e/n)
+## 
+## [[3]]
+## IGRAPH UNW- 1027 1322 -- 
+## + attr: name (v/c), weight_1 (e/n), weight_2 (e/n), weight (e/n)</code></pre>
+<p>Additionally, we can see that our <code>mn</code> summary has been updated to reflect the number of mapped networks we now have.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn</code></pre></div>
+<pre><code>## --Meta'omic Network-- 
+## Mapped Networks:  16 (3 sets) 
+## Data Sets:  2 
+## -Metadata-
+## Location :  Florida</code></pre>
+</div>
+<div id="visualizing-networks" class="section level2">
+<h2>Visualizing Networks</h2>
+<p>Lastly, we of course want to visualize the networks! We do this with the <code>run.vis</code> function. This function has a few options:</p>
+<ul>
+<li><strong>network.index</strong> : the index of which “combined network” the user wants to view.</li>
+<li><strong>new.window</strong> : whether to plot the networks in the native RStudio graphics window, or in a new window.</li>
+<li><strong>single.plot</strong> : whether to put all intermediate plots on the same screen, or show them one-by-one.</li>
+</ul>
+<p>These arguments all become quite clear in a short amount of use time.</p>
+<p>For our example, we might use the following: <code>run.vis(mn, network.index=1, new.window=FALSE, single.plot=TRUE)</code></p>
+<p>In an actual R environment, this would start the visualization process. This process is documentened and explained further in the supplementary materials section.</p>
+</div>
+<div id="descriptive-statistics" class="section level2">
+<h2>Descriptive Statistics</h2>
+<p>Because our package is built on top of the popular <strong>igraph</strong> package, the multiplicity of network statistics function available in that package our available in MetaNetR. This is quite an efficient use of resources, since developing an equivalent amount of statistical functionality would require a team of programmers and several months at the least! With this, the functionality in MetaNetR grows as the functionality in the igraph package does.</p>
+<p>With that said, the user is thus recommended to look at the igraph documentation for inspiration on which functions/statistics to use. Here is a simple example for getting the degree distribution of the network and extracting the “hub nodes”</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">net<span class="fl">.1</span> &lt;-<span class="st"> </span>mn$combined.networks[[<span class="dv">1</span>]]
+degree.dist &lt;-<span class="st"> </span><span class="kw">degree</span>(net<span class="fl">.1</span>)
+
+hub.nodes &lt;-<span class="st"> </span>degree.dist[degree.dist&gt;<span class="kw">mean</span>(degree.dist)]
+<span class="kw">print</span>(hub.nodes)</code></pre></div>
+<pre><code>##                                        SINK 
+##                                          21 
+##                       Amino Acid Metabolism 
+##                                          14 
+## Biosynthesis of Other Secondary Metabolites 
+##                                          15 
+##                     Carbohydrate Metabolism 
+##                                          17 
+##                          Circulatory System 
+##                                           3 
+##                                 Development 
+##                                           4 
+##                            Digestive System 
+##                                          10 
+##                            Endocrine System 
+##                                           8 
+##                           Energy Metabolism 
+##                                          10 
+##                    Environmental Adaptation 
+##                                           5 
+##          Glycan Biosynthesis and Metabolism 
+##                                          16 
+##                               Immune System 
+##                                          15 
+##                            Lipid Metabolism 
+##                                          19 
+##        Metabolism of Cofactors and Vitamins 
+##                                          13 
+##             Metabolism of Other Amino Acids 
+##                                          10 
+##    Metabolism of Terpenoids and Polyketides 
+##                                          17 
+##                              Nervous System 
+##                                          11 
+##                       Nucleotide Metabolism 
+##                                           4 
+##   Xenobiotics Biodegradation and Metabolism 
+##                                          22 
+##                            Excretory System 
+##                                           6 
+##                              Sensory System 
+##                                           5 
+##                                             
+##                                           5</code></pre>
+<p>With that, we conclude the vignette. For a further look at the package, see the supplamentary materials document or the official MetaNetR documentation.</p>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
