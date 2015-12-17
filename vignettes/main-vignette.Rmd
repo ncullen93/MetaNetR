@@ -1,13 +1,16 @@
 ---
 title: "Meta-omic Networks with MetaNetR"
-author: "Cullen, N., Foster, J., Casaburi, G."
-date: "`r Sys.Date()`"
+author: "Cullen, N., Foster, J.*, Casaburi, G."
+date: "*corresponding author: jfoster@ufl.edu"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Meta-omic Networks with MetaNetR}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
+
+
+
 
 The MetaNetR package was developed to face a long-standing problem in the meta-omics research: providing non-technical researchers a method for creating publication- and presentation-quality network plots from hierarchical meta-omic data. With MetaNetR, users have access to extensive functionality using only a few commands. Most importantly, the process for creating an advanced network plot is __completely__ interactive -- requiring zero manual parameter changes.
 
@@ -18,39 +21,50 @@ Overall, MetaNetR offers users the ability to do the following:
 - Visualize and create network plots with a fully user-interactive process
 - Explore a vast collection of descriptive statistical measures of networks
 
-In this vignette, we will go over the basic, yet powerful, functionality of MetaNetR. Before anything, though, let's load the package. Keep in mind it must be installed first!
+In this vignette, the basic, yet powerful, functionality of MetaNetR will be reviewed. Before anything, the package needs to be installed and loaded into the R environment.
+
+## Package Installation and Loading
+
+Installing MetaNetR is similar to installing any other R package. Since the package is not hosted on CRAN, users must have the zip file containing the package, but there are three general ways to install it:
+
+- Users can call the `install.packages` function while passing in the user's local file path to the zip file -- e.g. `install.packages(file.path)`. 
+
+- Alternatively, a more user-friendly way to install the package is to call the function `install.packages(file.choose(),repos=NULL)`, which allows the user to browse for the zip file. 
+
+- Lastly, and most user-friendly, the package can be installed in RStudio by going to `Tools > Install Packages... > Browse` on the upper RStudio toolbar, then choosing the zip file.
+
+If a user wishes to keep more up-to-date with package development, the package can be installed directly from github by importing the devtools package and calling the function `install_github("ncullen93/metanetr")`.
+ 
+Loading the package is done as usual in R with the `library` or `require` functions.
+
 ```{r, results="hide", warning=FALSE,message=FALSE}
 library(MetaNetR)
 ```
-
-
 ## Loading Data
-
 
 Loading data is fundamental to the network creation process. With MetaNetR, users load data exactly as they would in the standard R environment.
 
-In any case, the package includes three actual metagenomic datasets that can be used for practice -- called dataset0 (large dataset), and three partitions of dataset0 (dataset1, dataset2, dataset3).
+In any case, the package includes three actual datasets (found in the folder "Data" within the package files) that can be used for practice -- called dataset0 (large dataset), and three partitions of dataset0 (dataset1, dataset2, dataset3). Data is taken from the Stromatolite metagenome. [^1]
 
-Let's load two of the datasets for now.
+[^1]: Mobberley, J.M., et al. (2015) Inner workings of thrombolites: spatial gradients of metabolic activity as revealed by metatranscriptome profiling. Scientific Re-ports 5: 12601
+
+The command to load any of the datasets is as follows:
 
 ```{r}
 data(dataset1)
 data(dataset2)
 ```
-We can take a look at the data to get a preliminary understanding of its structure
+The command is similar for loading any other dataset. Any traditional R command can be used to provide a preliminary understanding of the data's structure.
 ```{r}
 head(dataset1, n=5)
 ```
 
-If you want to use your own datasets, you would load them into the R environment as data.frames using any standard data loading method.
-
-Now that we have our datasets, we need to combine them into a R `list`. This is necessary for mapping the data later.
+Other datasets would be loaded into the R environment using any standard data loading method, but they should be of type `data.frame`. Once the data sets are loaded they need to be combined into a R `list`. This step is necessary for mapping the data later.
 ```{r}
 files <- list(dataset1,dataset2)
 ```
-
 ## Creating an `LPV Map`
-Now that we have two datasets at our disposal, we need to create a _label-path-value map_ for each dataset. This is essentially the way to tell MetaNetR what each column in the data represents. A __label__ is a non-essential identifier (e.g. read number), a __path__ represents part of the hierarchical taxonomical structure (e.g. protein) and a __value__ is the actual numerical, experimental result (e.g. abundance).
+Next, a _label-path-value map_ needs to be created for each dataset. This step tells MetaNetR what each column in the data represents. A __label__ is a non-essential identifier (e.g. read number), a __path__ represents part of the hierarchical taxonomical structure (e.g. protein) and a __value__ is the actual numerical, experimental result (e.g. abundance).
 
 ```{r}
 
@@ -71,26 +85,26 @@ lpv.2 <- list(label.columns.2,
               value.columns.2) # combine labels/paths/values into a list
 
 ```
-Now that we have two lpv maps, we will do as we did with the data and combine them into a list.
+A single list is then created from the two lpv maps, as was done with the datasets:
 ```{r}
 lpv <- list(lpv.1,
             lpv.2) # combbine each dataset lpv into one main lpv
 ```
 ## Loading a MetaNetR variable
-Since we have our data and our lpv maps, we can now load those two together and combine them into one variable.
+The data and lpv maps can then be loaded together and combined into one variable by calling MetaNetR's first main function `load.data` as follows.
 
 ```{r}
 mn <- load.data(f=files,lpv=lpv)
 ```
-Above, we called the `load.data` function, passing in our `files` list and our `lpv` list as arguments. We assign the result of the function to a new variable called `mn`. Here, `mn` is our MetaNetR object. We can easily check that it belongs to the MetaNet class.
+Above, the `load.data` function was called, passing in the `files` list of datasets and the `lpv` list of lpv maps as arguments. The result of the function was assigned to a new variable called `mn`. Here, `mn` is the MetaNetR object. It is straight-forward to check that it belongs to the MetaNet class.
 ```{r}
 class(mn)
 ```
-Additionally, we can print our `mn` variable to the console, where we will see information about it.
+Additionally, the `mn` variable can be printed to the console, where information about it will be visible.
 ```{r}
 mn
 ```
-From printing, we see that there is a metadata section! Users can set metadata in order to keep track of important notes related to the data or the visualizations. For example, let's note that `mn` has data that was collected in Florida.
+From printing, it's clear that there is a metadata section! Users can set metadata in order to keep track of important notes related to the data or the visualizations. For example, suppose that `mn` has data which was collected in Florida.
 
 ```{r}
 set.metadata(mn, "Location", "Florida")
@@ -98,58 +112,63 @@ set.metadata(mn, "Location", "Florida")
 
 Remember that functions such as `set.metadata` can be found in the official MetaNetR documentation.
 ## Mapping Networks
-Now that we have our `mn` variable containing our data and original lpv maps, we can go ahead and actually map a network.
+With the `mn` variable containing the data and original lpv maps, the next step is to go ahead and actually map a network.
 
-We do this using the `map.network` function. While we refer the users to the official documentation using `help(map.network)`, this function serves to create the actual network structure from the underlying data and lpv map.
+This is done using the `map.network` function. While users should refer to the official documentation or call `help(map.network)`, a quick summary of this function is that it serves to create the actual network structure using the underlying data and lpv map. The underlying network is created in the code from the igraph package; this is what is meant by saying MetaNetR is build "on top of" igraph.
 
-With this function, We will again pass in an lpv map. This time, however, the lpv map offers an additional level of flexibility because you do not actually have to use the entire _original_ lpv map.
+With this function, it is necessary to again pass in an lpv map -- a different one though. This time, however, the lpv map offers an additional level of flexibility because it is not required to actually use the entire _original_ lpv map. This will become clear with the code examples:
 
-Let's see what this means:
 ```{r}
 map.network(mn,datasets=c(1,2),
             lpv=list(list(1,1:2,2:3),list(1,1:2,2:3)))
 ```
-Above, we used both datasets by specifying as such for the `datasets` argument. Then, we specified the `lpv` argument of the function to use the __first__ label, the __first__ and __second__ paths, and the __second__ and __third__ values for each dataset. What this means is that we left off the __third__ path and the __first__ value from the network creation process.
+Above, both datasets were used by specifying their indices in the `datasets` argument. Since two datasets were loaded earlier, the possible values for the `datasets` argument is any combination of 1 and 2. If five datasets were loaded, any combination of 1 through 5 is possible -- simply specify the datasets to include in a vector. In practice, users may load in many datasets originally, but only use a few for a given network mapping.
 
-The `map.network` function creates a "combined network" from all of the datasets, merging them into one hierarchical network structure. We can use all of the labels, paths, and values for each dataset if we wanted! This is how:
+Then, the `lpv` argument of the function was specified just as originally -- each dataset gets its own `list`, and each list has three elements separated by commas: the label columns, the path columns, and the value columns. Here, for both datasets `list(1,1:2,2:3)` was passed in, telling the function to use the __first__ label, the __first__ and __second__ paths, and the __second__ and __third__ values for each dataset. This means that the __third__ path and the __first__ value were left off from the network creation process. 
+
+Thus, the resulting "combined network" from calling this function will have only two paths (hierarchies) and two values (abundances) with which to work.
+
+The `map.network` function creates a "combined network" from all of the datasets, merging them into one hierarchical network structure. It is common to use all of the labels, paths, and values for each dataset. This is how:
 ```{r}
 map.network(mn, datasets=c(1,2),
             lpv=list(list(1,1:3,1:3),list(1,1:3,1:3)))
 ```
-Even more, we can use different _paths_ from each dataset, leading to an interesting structural merging of the two:
+Even more, it's possible to use different _paths_ or different _values_ from each dataset, leading to an interesting structural merging of the two:
 ```{r}
 map.network(mn, datasets=c(1,2),
-            lpv=list(list(1,1:2,1:3),list(1,2:3,1:3)))
+            lpv=list(list(1,1:2,1:3),list(1,2:3,1:2)))
 ```
-This functionality gives the user flexibility in the network _creation_ process, without requiring that data is loaded over and over again with different _original_ lpv maps.
+This functionality gives the user flexibility in the network creation process, without requiring that data is loaded over and over again with different original lpv maps.
 
-With all these, the `map.network` function creates a combined network with each call. We can vieW all of the networks we have created.
+With all these, the `map.network` function creates a combined network with each call. All of the created networks can be viewed as such:
 ```{r}
 mn$combined.networks
 ```
-Additionally, we can see that our `mn` summary has been updated to reflect the number of mapped networks we now have.
+Additionally, the `mn` print summary has been updated to reflect the number of mapped networks now available.
 ```{r}
 mn
 ```
 ## Visualizing Networks
-Lastly, we of course want to visualize the networks! We do this with the `run.vis` function. This function has a few options:
+The last stage involves visualizing the network, which can be done using the `run.vis` function. This function has a few options:
 
 - __network.index__ : the index of which "combined network" the user wants to view.
 - __new.window__ : whether to plot the networks in the native RStudio graphics window, or in a new window.
 - __single.plot__ : whether to put all intermediate plots on the same screen, or show them one-by-one.
 
-These arguments all become quite clear in a short amount of use time.
+These arguments all become quite clear very quickly with repeated use.
 
-For our example, we might use the following:
+For our example, it is common to use the following:
 `run.vis(mn, network.index=1, new.window=FALSE, single.plot=TRUE)`
 
 In an actual R environment, this would start the visualization process. This process is documentened and explained further in the supplementary materials section.
 
 ## Descriptive Statistics
 
-Because our package is built on top of the popular __igraph__ package, the multiplicity of network statistics function available in that package our available in MetaNetR. This is quite an efficient use of resources, since developing an equivalent amount of statistical functionality would require a team of programmers and several months at the least! With this, the functionality in MetaNetR grows as the functionality in the igraph package does. 
+Because the MetaNetR package is built on top of the popular __igraph__[^2]  package, the multiplicity of network statistics function available in that package are available in MetaNetR. With this, the functionality in MetaNetR grows as the functionality in the igraph package does. 
 
-With that said, the user is thus recommended to look at the igraph documentation for inspiration on which functions/statistics to use. Here is a simple example for getting the degree distribution of the network and extracting the "hub nodes"
+[^2]: igraph.org/r/doc/
+
+With that said, the user is recommended to look at the igraph documentation for inspiration on which functions/statistics to use. Here is a simple example for getting the degree distribution of the network and extracting the "hub nodes"
 ```{r}
 net.1 <- mn$combined.networks[[1]]
 degree.dist <- degree(net.1)
@@ -158,4 +177,4 @@ hub.nodes <- degree.dist[degree.dist>mean(degree.dist)]
 print(hub.nodes)
 ```
 
-With that, we conclude the vignette. For a further look at the package, see the supplamentary materials document or the official MetaNetR documentation.
+For a further look at the package, see the supplementary materials document or the official MetaNetR documentation.

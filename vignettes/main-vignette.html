@@ -8,9 +8,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
-<meta name="author" content="Cullen, N., Foster, J., Casaburi, G." />
+<meta name="author" content="Cullen, N., Foster, J.*, Casaburi, G." />
 
-<meta name="date" content="2015-12-15" />
 
 <title>Meta-omic Networks with MetaNetR</title>
 
@@ -71,8 +70,8 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <div id="header">
 <h1 class="title">Meta-omic Networks with MetaNetR</h1>
-<h4 class="author"><em>Cullen, N., Foster, J., Casaburi, G.</em></h4>
-<h4 class="date"><em>2015-12-15</em></h4>
+<h4 class="author"><em>Cullen, N., Foster, J.*, Casaburi, G.</em></h4>
+<h4 class="date"><em>*corresponding author: <a href="mailto:jfoster@ufl.edu">jfoster@ufl.edu</a></em></h4>
 </div>
 
 
@@ -84,16 +83,27 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <li>Visualize and create network plots with a fully user-interactive process</li>
 <li>Explore a vast collection of descriptive statistical measures of networks</li>
 </ul>
-<p>In this vignette, we will go over the basic, yet powerful, functionality of MetaNetR. Before anything, though, let’s load the package. Keep in mind it must be installed first!</p>
+<p>In this vignette, the basic, yet powerful, functionality of MetaNetR will be reviewed. Before anything, the package needs to be installed and loaded into the R environment.</p>
+<div id="package-installation-and-loading" class="section level2">
+<h2>Package Installation and Loading</h2>
+<p>Installing MetaNetR is similar to installing any other R package. Since the package is not hosted on CRAN, users must have the zip file containing the package, but there are three general ways to install it:</p>
+<ul>
+<li><p>Users can call the <code>install.packages</code> function while passing in the user’s local file path to the zip file – e.g. <code>install.packages(file.path)</code>.</p></li>
+<li><p>Alternatively, a more user-friendly way to install the package is to call the function <code>install.packages(file.choose(),repos=NULL)</code>, which allows the user to browse for the zip file.</p></li>
+<li><p>Lastly, and most user-friendly, the package can be installed in RStudio by going to <code>Tools &gt; Install Packages... &gt; Browse</code> on the upper RStudio toolbar, then choosing the zip file.</p></li>
+</ul>
+<p>If a user wishes to keep more up-to-date with package development, the package can be installed directly from github by importing the devtools package and calling the function <code>install_github(&quot;ncullen93/metanetr&quot;)</code>.</p>
+<p>Loading the package is done as usual in R with the <code>library</code> or <code>require</code> functions.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(MetaNetR)</code></pre></div>
+</div>
 <div id="loading-data" class="section level2">
 <h2>Loading Data</h2>
 <p>Loading data is fundamental to the network creation process. With MetaNetR, users load data exactly as they would in the standard R environment.</p>
-<p>In any case, the package includes three actual metagenomic datasets that can be used for practice – called dataset0 (large dataset), and three partitions of dataset0 (dataset1, dataset2, dataset3).</p>
-<p>Let’s load two of the datasets for now.</p>
+<p>In any case, the package includes three actual datasets (found in the folder “Data” within the package files) that can be used for practice – called dataset0 (large dataset), and three partitions of dataset0 (dataset1, dataset2, dataset3). Data is taken from the Stromatolite metagenome. <a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a></p>
+<p>The command to load any of the datasets is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(dataset1)
 <span class="kw">data</span>(dataset2)</code></pre></div>
-<p>We can take a look at the data to get a preliminary understanding of its structure</p>
+<p>The command is similar for loading any other dataset. Any traditional R command can be used to provide a preliminary understanding of the data’s structure.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(dataset1, <span class="dt">n=</span><span class="dv">5</span>)</code></pre></div>
 <pre><code>##    Label.1                  Path.1               Path.2
 ## 1:  K01014       Energy Metabolism    Sulfur metabolism
@@ -113,13 +123,12 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 ## 3:       6
 ## 4:      10
 ## 5:      20</code></pre>
-<p>If you want to use your own datasets, you would load them into the R environment as data.frames using any standard data loading method.</p>
-<p>Now that we have our datasets, we need to combine them into a R <code>list</code>. This is necessary for mapping the data later.</p>
+<p>Other datasets would be loaded into the R environment using any standard data loading method, but they should be of type <code>data.frame</code>. Once the data sets are loaded they need to be combined into a R <code>list</code>. This step is necessary for mapping the data later.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">files &lt;-<span class="st"> </span><span class="kw">list</span>(dataset1,dataset2)</code></pre></div>
 </div>
 <div id="creating-an-lpv-map" class="section level2">
 <h2>Creating an <code>LPV Map</code></h2>
-<p>Now that we have two datasets at our disposal, we need to create a <em>label-path-value map</em> for each dataset. This is essentially the way to tell MetaNetR what each column in the data represents. A <strong>label</strong> is a non-essential identifier (e.g. read number), a <strong>path</strong> represents part of the hierarchical taxonomical structure (e.g. protein) and a <strong>value</strong> is the actual numerical, experimental result (e.g. abundance).</p>
+<p>Next, a <em>label-path-value map</em> needs to be created for each dataset. This step tells MetaNetR what each column in the data represents. A <strong>label</strong> is a non-essential identifier (e.g. read number), a <strong>path</strong> represents part of the hierarchical taxonomical structure (e.g. protein) and a <strong>value</strong> is the actual numerical, experimental result (e.g. abundance).</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># FOR DATASET 1</span>
 label.columns<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">1</span>) <span class="co"># columns in dataset1 that are &quot;labels&quot;</span>
 path.columns<span class="fl">.1</span> &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>) <span class="co"># columns in dataset1 that are &quot;paths&quot;</span>
@@ -135,40 +144,41 @@ value.columns<span class="fl">.2</span> &lt;-<span class="st"> </span><span clas
 lpv<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">list</span>(label.columns<span class="fl">.2</span>,
               path.columns<span class="fl">.2</span>,
               value.columns<span class="fl">.2</span>) <span class="co"># combine labels/paths/values into a list</span></code></pre></div>
-<p>Now that we have two lpv maps, we will do as we did with the data and combine them into a list.</p>
+<p>A single list is then created from the two lpv maps, as was done with the datasets:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">lpv &lt;-<span class="st"> </span><span class="kw">list</span>(lpv<span class="fl">.1</span>,
             lpv<span class="fl">.2</span>) <span class="co"># combbine each dataset lpv into one main lpv</span></code></pre></div>
 </div>
 <div id="loading-a-metanetr-variable" class="section level2">
 <h2>Loading a MetaNetR variable</h2>
-<p>Since we have our data and our lpv maps, we can now load those two together and combine them into one variable.</p>
+<p>The data and lpv maps can then be loaded together and combined into one variable by calling MetaNetR’s first main function <code>load.data</code> as follows.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn &lt;-<span class="st"> </span><span class="kw">load.data</span>(<span class="dt">f=</span>files,<span class="dt">lpv=</span>lpv)</code></pre></div>
-<p>Above, we called the <code>load.data</code> function, passing in our <code>files</code> list and our <code>lpv</code> list as arguments. We assign the result of the function to a new variable called <code>mn</code>. Here, <code>mn</code> is our MetaNetR object. We can easily check that it belongs to the MetaNet class.</p>
+<p>Above, the <code>load.data</code> function was called, passing in the <code>files</code> list of datasets and the <code>lpv</code> list of lpv maps as arguments. The result of the function was assigned to a new variable called <code>mn</code>. Here, <code>mn</code> is the MetaNetR object. It is straight-forward to check that it belongs to the MetaNet class.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">class</span>(mn)</code></pre></div>
 <pre><code>## [1] &quot;metanet&quot;</code></pre>
-<p>Additionally, we can print our <code>mn</code> variable to the console, where we will see information about it.</p>
+<p>Additionally, the <code>mn</code> variable can be printed to the console, where information about it will be visible.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn</code></pre></div>
 <pre><code>## --Meta'omic Network-- 
 ## Mapped Networks:  0 
 ## Data Sets:  2 
 ## No Metadata Available</code></pre>
-<p>From printing, we see that there is a metadata section! Users can set metadata in order to keep track of important notes related to the data or the visualizations. For example, let’s note that <code>mn</code> has data that was collected in Florida.</p>
+<p>From printing, it’s clear that there is a metadata section! Users can set metadata in order to keep track of important notes related to the data or the visualizations. For example, suppose that <code>mn</code> has data which was collected in Florida.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.metadata</span>(mn, <span class="st">&quot;Location&quot;</span>, <span class="st">&quot;Florida&quot;</span>)</code></pre></div>
-<p>Remember that functions such as <code>set.metadata</code> can be found in the official MetaNetR documentation. ## Mapping Networks Now that we have our <code>mn</code> variable containing our data and original lpv maps, we can go ahead and actually map a network.</p>
-<p>We do this using the <code>map.network</code> function. While we refer the users to the official documentation using <code>help(map.network)</code>, this function serves to create the actual network structure from the underlying data and lpv map.</p>
-<p>With this function, We will again pass in an lpv map. This time, however, the lpv map offers an additional level of flexibility because you do not actually have to use the entire <em>original</em> lpv map.</p>
-<p>Let’s see what this means:</p>
+<p>Remember that functions such as <code>set.metadata</code> can be found in the official MetaNetR documentation. ## Mapping Networks With the <code>mn</code> variable containing the data and original lpv maps, the next step is to go ahead and actually map a network.</p>
+<p>This is done using the <code>map.network</code> function. While users should refer to the official documentation or call <code>help(map.network)</code>, a quick summary of this function is that it serves to create the actual network structure using the underlying data and lpv map. The underlying network is created in the code from the igraph package; this is what is meant by saying MetaNetR is build “on top of” igraph.</p>
+<p>With this function, it is necessary to again pass in an lpv map – a different one though. This time, however, the lpv map offers an additional level of flexibility because it is not required to actually use the entire <em>original</em> lpv map. This will become clear with the code examples:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn,<span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
             <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">2</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">2</span>:<span class="dv">3</span>)))</code></pre></div>
-<p>Above, we used both datasets by specifying as such for the <code>datasets</code> argument. Then, we specified the <code>lpv</code> argument of the function to use the <strong>first</strong> label, the <strong>first</strong> and <strong>second</strong> paths, and the <strong>second</strong> and <strong>third</strong> values for each dataset. What this means is that we left off the <strong>third</strong> path and the <strong>first</strong> value from the network creation process.</p>
-<p>The <code>map.network</code> function creates a “combined network” from all of the datasets, merging them into one hierarchical network structure. We can use all of the labels, paths, and values for each dataset if we wanted! This is how:</p>
+<p>Above, both datasets were used by specifying their indices in the <code>datasets</code> argument. Since two datasets were loaded earlier, the possible values for the <code>datasets</code> argument is any combination of 1 and 2. If five datasets were loaded, any combination of 1 through 5 is possible – simply specify the datasets to include in a vector. In practice, users may load in many datasets originally, but only use a few for a given network mapping.</p>
+<p>Then, the <code>lpv</code> argument of the function was specified just as originally – each dataset gets its own <code>list</code>, and each list has three elements separated by commas: the label columns, the path columns, and the value columns. Here, for both datasets <code>list(1,1:2,2:3)</code> was passed in, telling the function to use the <strong>first</strong> label, the <strong>first</strong> and <strong>second</strong> paths, and the <strong>second</strong> and <strong>third</strong> values for each dataset. This means that the <strong>third</strong> path and the <strong>first</strong> value were left off from the network creation process.</p>
+<p>Thus, the resulting “combined network” from calling this function will have only two paths (hierarchies) and two values (abundances) with which to work.</p>
+<p>The <code>map.network</code> function creates a “combined network” from all of the datasets, merging them into one hierarchical network structure. It is common to use all of the labels, paths, and values for each dataset. This is how:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn, <span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
             <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>)))</code></pre></div>
-<p>Even more, we can use different <em>paths</em> from each dataset, leading to an interesting structural merging of the two:</p>
+<p>Even more, it’s possible to use different <em>paths</em> or different <em>values</em> from each dataset, leading to an interesting structural merging of the two:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">map.network</span>(mn, <span class="dt">datasets=</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>),
-            <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">1</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">2</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">3</span>)))</code></pre></div>
-<p>This functionality gives the user flexibility in the network <em>creation</em> process, without requiring that data is loaded over and over again with different <em>original</em> lpv maps.</p>
-<p>With all these, the <code>map.network</code> function creates a combined network with each call. We can vieW all of the networks we have created.</p>
+            <span class="dt">lpv=</span><span class="kw">list</span>(<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">2</span>,<span class="dv">1</span>:<span class="dv">3</span>),<span class="kw">list</span>(<span class="dv">1</span>,<span class="dv">2</span>:<span class="dv">3</span>,<span class="dv">1</span>:<span class="dv">2</span>)))</code></pre></div>
+<p>This functionality gives the user flexibility in the network creation process, without requiring that data is loaded over and over again with different original lpv maps.</p>
+<p>With all these, the <code>map.network</code> function creates a combined network with each call. All of the created networks can be viewed as such:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn$combined.networks</code></pre></div>
 <pre><code>## [[1]]
 ## IGRAPH UNW- 223 226 -- 
@@ -181,30 +191,30 @@ lpv<span class="fl">.2</span> &lt;-<span class="st"> </span><span class="kw">lis
 ## [[3]]
 ## IGRAPH UNW- 1027 1322 -- 
 ## + attr: name (v/c), weight_1 (e/n), weight_2 (e/n), weight (e/n)</code></pre>
-<p>Additionally, we can see that our <code>mn</code> summary has been updated to reflect the number of mapped networks we now have.</p>
+<p>Additionally, the <code>mn</code> print summary has been updated to reflect the number of mapped networks now available.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mn</code></pre></div>
 <pre><code>## --Meta'omic Network-- 
-## Mapped Networks:  16 (3 sets) 
+## Mapped Networks:  15 (3 sets) 
 ## Data Sets:  2 
 ## -Metadata-
 ## Location :  Florida</code></pre>
 </div>
 <div id="visualizing-networks" class="section level2">
 <h2>Visualizing Networks</h2>
-<p>Lastly, we of course want to visualize the networks! We do this with the <code>run.vis</code> function. This function has a few options:</p>
+<p>The last stage involves visualizing the network, which can be done using the <code>run.vis</code> function. This function has a few options:</p>
 <ul>
 <li><strong>network.index</strong> : the index of which “combined network” the user wants to view.</li>
 <li><strong>new.window</strong> : whether to plot the networks in the native RStudio graphics window, or in a new window.</li>
 <li><strong>single.plot</strong> : whether to put all intermediate plots on the same screen, or show them one-by-one.</li>
 </ul>
-<p>These arguments all become quite clear in a short amount of use time.</p>
-<p>For our example, we might use the following: <code>run.vis(mn, network.index=1, new.window=FALSE, single.plot=TRUE)</code></p>
+<p>These arguments all become quite clear very quickly with repeated use.</p>
+<p>For our example, it is common to use the following: <code>run.vis(mn, network.index=1, new.window=FALSE, single.plot=TRUE)</code></p>
 <p>In an actual R environment, this would start the visualization process. This process is documentened and explained further in the supplementary materials section.</p>
 </div>
 <div id="descriptive-statistics" class="section level2">
 <h2>Descriptive Statistics</h2>
-<p>Because our package is built on top of the popular <strong>igraph</strong> package, the multiplicity of network statistics function available in that package our available in MetaNetR. This is quite an efficient use of resources, since developing an equivalent amount of statistical functionality would require a team of programmers and several months at the least! With this, the functionality in MetaNetR grows as the functionality in the igraph package does.</p>
-<p>With that said, the user is thus recommended to look at the igraph documentation for inspiration on which functions/statistics to use. Here is a simple example for getting the degree distribution of the network and extracting the “hub nodes”</p>
+<p>Because the MetaNetR package is built on top of the popular <strong>igraph</strong><a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> package, the multiplicity of network statistics function available in that package are available in MetaNetR. With this, the functionality in MetaNetR grows as the functionality in the igraph package does.</p>
+<p>With that said, the user is recommended to look at the igraph documentation for inspiration on which functions/statistics to use. Here is a simple example for getting the degree distribution of the network and extracting the “hub nodes”</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">net<span class="fl">.1</span> &lt;-<span class="st"> </span>mn$combined.networks[[<span class="dv">1</span>]]
 degree.dist &lt;-<span class="st"> </span><span class="kw">degree</span>(net<span class="fl">.1</span>)
 
@@ -254,7 +264,14 @@ hub.nodes &lt;-<span class="st"> </span>degree.dist[degree.dist&gt;<span class="
 ##                                           5 
 ##                                             
 ##                                           5</code></pre>
-<p>With that, we conclude the vignette. For a further look at the package, see the supplamentary materials document or the official MetaNetR documentation.</p>
+<p>For a further look at the package, see the supplementary materials document or the official MetaNetR documentation.</p>
+</div>
+<div class="footnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Mobberley, J.M., et al. (2015) Inner workings of thrombolites: spatial gradients of metabolic activity as revealed by metatranscriptome profiling. Scientific Re-ports 5: 12601<a href="#fnref1">↩</a></p></li>
+<li id="fn2"><p>igraph.org/r/doc/<a href="#fnref2">↩</a></p></li>
+</ol>
 </div>
 
 
